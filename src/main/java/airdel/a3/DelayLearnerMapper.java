@@ -19,7 +19,11 @@ import org.apache.hadoop.mapreduce.Mapper;
 import airdel.a3.util.Parser;
 
 
-/*
+/**
+ * Mapper parses the data line by line and generates the emits based
+ * on the combinations of attributes and learn the features
+ * to reducer
+ * 
  * Input Key:  Line in file
  * Input Value:  Text content of the line
  * Output Keys:  Array of fields to consider for pattern detection
