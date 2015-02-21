@@ -26,7 +26,10 @@ public class Parser {
 		}
 		_ISLOAD = true;
 	}
-	
+	/**
+	 * Loads the headers form /properties.pa
+	 * @throws IOException
+	 */
 	private static void load_headers() throws IOException {
 		Properties prop = new Properties();
 		InputStream in = null;
