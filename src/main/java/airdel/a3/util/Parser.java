@@ -138,6 +138,7 @@ public class Parser {
 			if(i != 0)
 				sb.append("|");
 			sb.append(getKeyValuePair(key));
+			i = 1;
 		}
 		return sb.toString();
 	}
