@@ -12,6 +12,7 @@ public class Parser {
 	private static final String HEADERPROP = "header";
 	private static final String HEADERSPLIT = ",";
 	private static final String IS_VALID = "is_valid";
+	private static final String SEP = "_";
 	public static int MAX_HEAD_LEN = 120;
 	private static boolean _ISLOAD = false;
 	public static String HEADERS[];
@@ -130,6 +131,10 @@ public class Parser {
 		return data.size();
 	}
 	
+	
+	public String getKeyValuePair(String index) {
+		return index+SEP+data.get(index).toString();
+	}
 	/**
 	 * {@inheritDoc}
 	 */
