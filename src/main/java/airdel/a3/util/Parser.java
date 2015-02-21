@@ -27,7 +27,7 @@ public class Parser {
 		_ISLOAD = true;
 	}
 	/**
-	 * Loads the headers form /properties.pa
+	 * Loads the headers form /parser.properties
 	 * @throws IOException
 	 */
 	private static void load_headers() throws IOException {
@@ -54,6 +54,11 @@ public class Parser {
 		}
 	}
 	
+	/**
+	 * Constructor creates the Parser, takes a char DELIMITER
+	 * as an argument
+	 * @param del
+	 */
 	public Parser (char del) {
 		this.del = del+"";
 		data = new HashMap<String, Object>();
@@ -63,6 +68,12 @@ public class Parser {
 		data.put(IS_VALID, false);
 	}
 	
+	/**
+	 * Parses the line String by splitting it using DELIMITER.
+	 * It avoids splitting DELIMITER between quotes.
+	 * @param line
+	 * @return
+	 */
 	public Parser parse (String line) {
 		data.put(IS_VALID, false);
 		if(line == null)
@@ -83,6 +94,13 @@ public class Parser {
 		return this;
 	}
 	
+	/**
+	 * Parses the value at String index and returns Value as
+	 * Integer
+	 * @param index String key
+	 * @return value Integer value
+	 * @throws NumberFormatException
+	 */
 	public int getInt (String index) 
 			throws NumberFormatException {
 		try {
@@ -92,6 +110,11 @@ public class Parser {
 		}
 	}
 	
+	/**
+	 * Returns the value as string for the given String index
+	 * @param index String key
+	 * @return value String value
+	 */
 	public String getText (String index) {
 		Object obj = data.get(index);
 		if(obj == null)
@@ -99,15 +122,27 @@ public class Parser {
 		return obj.toString();
 	}
 	
+	/**
+	 * Returns length of the data
+	 * @return
+	 */
 	public int getLength(){
 		return data.size();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return data.toString();
 	}
 	
+	/**
+	 * Returns true if the data is consistent
+	 * Decided by parser.parse(String&lt;line&gt;).  
+	 * @return
+	 */
 	public boolean isValid() {
 		return ((Boolean) data.get(IS_VALID));
 	}
