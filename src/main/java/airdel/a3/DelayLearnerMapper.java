@@ -45,10 +45,10 @@ extends Mapper<LongWritable, Text, ArrayWritable, IntWritable> {
 			int isDelayed = parser.getInt("ArrDelay15");
 			
 			// time to start writing to the context object
-			context.write(new ArrayWritable(new String[]{parser.getText("OriginAirportID")}), new IntWritable(isDelayed));
-			context.write(new ArrayWritable(new String[]{parser.getText("DestAirportID")}), new IntWritable(isDelayed));
-			context.write(new ArrayWritable(new String[]{parser.getText("Carrier")}), new IntWritable(isDelayed));
-			context.write(new ArrayWritable(new String[]{parser.getText("OriginAirportID"), parser.getText("DestAirportID")}), new IntWritable(isDelayed));
+			context.write(new ArrayWritable(new String[]{parser.getKeyValuePair("OriginAirportID")}), new IntWritable(isDelayed));
+			context.write(new ArrayWritable(new String[]{parser.getKeyValuePair("DestAirportID")}), new IntWritable(isDelayed));
+			context.write(new ArrayWritable(new String[]{parser.getKeyValuePair("Carrier")}), new IntWritable(isDelayed));
+			context.write(new ArrayWritable(new String[]{parser.getKeyValuePair("OriginAirportID"), parser.getText("DestAirportID")}), new IntWritable(isDelayed));
 		}	
 	}
 }
