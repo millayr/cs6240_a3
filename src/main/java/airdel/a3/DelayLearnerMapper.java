@@ -38,11 +38,11 @@ extends Mapper<LongWritable, Text, ArrayWritable, IntWritable> {
 	public void map(LongWritable offset, Text value, Context context) throws IOException, InterruptedException {
 		// Send the value to the parser to put the data in to a map
 		parser.parse(value.toString());
-		
+
 		// only process this line if it's valid
 		if(parser.isValid()) {
 			// Was this flight delayed?
-			int isDelayed = parser.getInt("ArrDelay15");
+			int isDelayed = parser.getInt("ArrDel15");
 			
 			// time to start writing to the context object
 			context.write(new ArrayWritable(new String[]{parser.getKeyValuePair("OriginAirportID")}), new IntWritable(isDelayed));

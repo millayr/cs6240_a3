@@ -45,7 +45,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass><!--  nu.cs6240.hadoop.a2.A2_Driver --></mainClass>
+							<mainClass>airdel.a3.A3_Driver</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

@@ -28,15 +28,19 @@ public class A3_Driver {
 			j.setJobName("Delay Learner");
 			
 			// configure the input and output paths
-			FileInputFormat.addInputPath(j, new Path(args[0]));
+			FileInputFormat.addInputPath(j, new Path(args[1]));
 			FileOutputFormat.setOutputPath(j, new Path("model"));
 			
 			// configure the map and reduce tasks
 			j.setMapperClass(DelayLearnerMapper.class);
 			j.setReducerClass(DelayLearnerReducer.class);
 			
+			// set map output
+			j.setMapOutputKeyClass(ArrayWritable.class);
+			j.setMapOutputValueClass(IntWritable.class);
+			
 			// configure the output settings
-			j.setOutputKeyClass(Text.class);
+			j.setOutputKeyClass(ArrayWritable.class);
 			j.setOutputValueClass(FloatWritable.class);
 			
 			// run it!
