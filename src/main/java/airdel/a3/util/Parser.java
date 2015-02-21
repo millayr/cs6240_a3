@@ -131,6 +131,16 @@ public class Parser {
 		return data.size();
 	}
 	
+	public String getKeyValuePairs(String indices[]) {
+		StringBuffer sb = new StringBuffer();
+		int i = 0;
+		for(String key: indices) {
+			if(i != 0)
+				sb.append("|");
+			sb.append(getKeyValuePair(key));
+		}
+		return sb.toString();
+	}
 	
 	public String getKeyValuePair(String index) {
 		return index+SEP+data.get(index).toString();

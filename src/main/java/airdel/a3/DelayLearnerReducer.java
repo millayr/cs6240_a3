@@ -11,7 +11,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 
 public class DelayLearnerReducer
 
-extends Reducer<ArrayWritable, IntWritable, Text, FloatWritable> {
+extends Reducer<Text, IntWritable, Text, FloatWritable> {
 	
 	/**
 	 * Learns the features and puts down the learnings in
@@ -21,7 +21,7 @@ extends Reducer<ArrayWritable, IntWritable, Text, FloatWritable> {
 	 * produces <ArrayWritable, IntWritable>
 	 */
 	@Override
-	public void reduce(ArrayWritable key, Iterable<IntWritable> values,
+	public void reduce(Text key, Iterable<IntWritable> values,
 		Context context) throws IOException, InterruptedException {
 		int sum = 0;
 		int total = 0;
@@ -33,9 +33,6 @@ extends Reducer<ArrayWritable, IntWritable, Text, FloatWritable> {
 		if(total > 0) 
 			delPercentage = (float) sum/total;
 		
-		context.write (
-				new Text(StringUtils.join(key.toStrings(), ",")), 
-				new FloatWritable(delPercentage)
-			);
+		context.write (key, new FloatWritable(delPercentage));
 	}
 }

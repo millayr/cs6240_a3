@@ -30,7 +30,7 @@ import airdel.a3.util.Parser;
  * Output Value:  1 if the flight was delayed by 15 min, 0 otherwise
  */
 public class DelayLearnerMapper 
-extends Mapper<LongWritable, Text, ArrayWritable, IntWritable> {
+extends Mapper<LongWritable, Text, Text, IntWritable> {
 	
 	private Parser parser = new Parser(',');
 	
@@ -45,10 +45,10 @@ extends Mapper<LongWritable, Text, ArrayWritable, IntWritable> {
 			int isDelayed = parser.getInt("ArrDel15");
 			
 			// time to start writing to the context object
-			context.write(new ArrayWritable(new String[]{parser.getKeyValuePair("OriginAirportID")}), new IntWritable(isDelayed));
-			context.write(new ArrayWritable(new String[]{parser.getKeyValuePair("DestAirportID")}), new IntWritable(isDelayed));
-			context.write(new ArrayWritable(new String[]{parser.getKeyValuePair("Carrier")}), new IntWritable(isDelayed));
-			context.write(new ArrayWritable(new String[]{parser.getKeyValuePair("OriginAirportID"), parser.getText("DestAirportID")}), new IntWritable(isDelayed));
+			context.write(new Text(parser.getKeyValuePairs(new String[] {"OriginAirportID"})), new IntWritable(isDelayed));
+			context.write(new Text(parser.getKeyValuePairs(new String[] {"DestAirportID"})), new IntWritable(isDelayed));
+			context.write(new Text(parser.getKeyValuePairs(new String[] {"Carrier"})), new IntWritable(isDelayed));
+			context.write(new Text(parser.getKeyValuePairs(new String[] {"OriginAirportID", "DestAirportID"})), new IntWritable(isDelayed));
 		}	
 	}
 }

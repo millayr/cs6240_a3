@@ -36,11 +36,11 @@ public class A3_Driver {
 			j.setReducerClass(DelayLearnerReducer.class);
 			
 			// set map output
-			j.setMapOutputKeyClass(ArrayWritable.class);
+			j.setMapOutputKeyClass(Text.class);
 			j.setMapOutputValueClass(IntWritable.class);
 			
 			// configure the output settings
-			j.setOutputKeyClass(ArrayWritable.class);
+			j.setOutputKeyClass(Text.class);
 			j.setOutputValueClass(FloatWritable.class);
 			
 			// run it!
