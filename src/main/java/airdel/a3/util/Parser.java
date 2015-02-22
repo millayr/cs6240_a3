@@ -1,8 +1,17 @@
+/**
+ * @author Ryan Millay
+ * @author Nikit Waghela
+ * CS6240
+ * Assignment 3
+ */
+
 package airdel.a3.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -10,19 +19,24 @@ public class Parser {
 	private static final String PARSER_PROP = "/parser.properties";
 	private static final String DEL = "(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 	private static final String HEADERPROP = "header";
+	private static final String KEYPROP = "keys";  // rpm
 	private static final String HEADERSPLIT = ",";
+	private static final String KEYSPLIT = ",";  // rpm
+	private static final String INTERMEDIATEKEYSPLIT = "_";  // rpm
 	private static final String IS_VALID = "is_valid";
 	private static final String SEP = "_";
 	public static int MAX_HEAD_LEN = 120;
 	private static boolean _ISLOAD = false;
 	public static String HEADERS[];
+	public static List<String[]> KEYS = new ArrayList<String[]>();  // rpm
 	private String del = ",";
 	public Map<String, Object> data;
 	
 	static {
 		if(!_ISLOAD) {
 			try {
-				load_headers();
+				//load_headers();
+				load_headers_and_keys();
 			} catch (Exception e) { e.printStackTrace();}
 		}
 		_ISLOAD = true;
@@ -39,6 +53,43 @@ public class Parser {
 			prop.load(in);
 			String header = prop.getProperty(HEADERPROP);
 			HEADERS = header.replaceAll("\"", "").split(HEADERSPLIT);
+		} catch (Exception io) {
+			HEADERS = new String[MAX_HEAD_LEN];
+			
+			for(Integer i = 0; i <  MAX_HEAD_LEN; i++) {
+				HEADERS[i] = i.toString();
+			}
+			io.printStackTrace();
+		} finally {
+			try {
+				in.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * Loads the headers and keys from /parser.properties
+	 * @throws IOException
+	 */
+	private static void load_headers_and_keys() throws IOException {
+		Properties prop = new Properties();
+		InputStream in = null;
+		try {
+			in = Parser.class.getResourceAsStream(PARSER_PROP);
+			prop.load(in);
+			
+			// read the headers of the csv file
+			String header = prop.getProperty(HEADERPROP);
+			HEADERS = header.replaceAll("\"", "").split(HEADERSPLIT);
+			
+			// read the key permutation for this trial
+			String key = prop.getProperty(KEYPROP);
+			String[] intermediateKeys = key.split(KEYSPLIT);
+			for(String intermediateKey : intermediateKeys) {
+				KEYS.add(intermediateKey.split(INTERMEDIATEKEYSPLIT));
+			}
 		} catch (Exception io) {
 			HEADERS = new String[MAX_HEAD_LEN];
 			

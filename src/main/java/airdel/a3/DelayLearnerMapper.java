@@ -10,7 +10,6 @@ package airdel.a3;
 //Import declarations
 import java.io.IOException;
 
-import org.apache.hadoop.io.ArrayWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -45,10 +44,9 @@ extends Mapper<LongWritable, Text, Text, IntWritable> {
 			int isDelayed = parser.getInt("ArrDel15");
 			
 			// time to start writing to the context object
-			context.write(new Text(parser.getKeyValuePairs(new String[] {"OriginAirportID"})), new IntWritable(isDelayed));
-			context.write(new Text(parser.getKeyValuePairs(new String[] {"DestAirportID"})), new IntWritable(isDelayed));
-			context.write(new Text(parser.getKeyValuePairs(new String[] {"Carrier"})), new IntWritable(isDelayed));
-			context.write(new Text(parser.getKeyValuePairs(new String[] {"OriginAirportID", "DestAirportID"})), new IntWritable(isDelayed));
+			for(String[] key : Parser.KEYS) {
+				context.write(new Text(parser.getKeyValuePairs(key)), new IntWritable(isDelayed));
+			}
 		}	
 	}
 }
