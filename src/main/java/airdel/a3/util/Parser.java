@@ -25,6 +25,7 @@ public class Parser {
 	private static final String INTERMEDIATEKEYSPLIT = "_";  // rpm
 	private static final String IS_VALID = "is_valid";
 	private static final String SEP = "_";
+	private static final Object PAIRSEP = "|";
 	public static int MAX_HEAD_LEN = 120;
 	private static boolean _ISLOAD = false;
 	public static String HEADERS[];
@@ -45,6 +46,7 @@ public class Parser {
 	 * Loads the headers form /parser.properties
 	 * @throws IOException
 	 */
+	@SuppressWarnings("all")
 	private static void load_headers() throws IOException {
 		Properties prop = new Properties();
 		InputStream in = null;
@@ -187,7 +189,7 @@ public class Parser {
 		int i = 0;
 		for(String key: indices) {
 			if(i != 0)
-				sb.append("|");
+				sb.append(PAIRSEP);
 			sb.append(getKeyValuePair(key));
 			i = 1;
 		}
