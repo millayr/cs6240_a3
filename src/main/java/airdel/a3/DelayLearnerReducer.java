@@ -1,5 +1,11 @@
 package airdel.a3;
-
+/**
+ * Reducer class to evaluate the delay pecentage for
+ * ever group of attribute received from mapper 
+ * @author Nikit Waghela
+ * @author Ryan Millay
+ * @author Pramod Khare
+ */
 import java.io.IOException;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,7 +24,7 @@ extends Reducer<Text, IntWritable, Text, FloatWritable> {
 	 * model
 	 * @author nikit
 	 * 
-	 * produces <ArrayWritable, IntWritable>
+	 * produces <Text, IntWritable>
 	 */
 	@Override
 	public void reduce(Text key, Iterable<IntWritable> values,
