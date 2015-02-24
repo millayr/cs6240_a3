@@ -24,7 +24,7 @@ extends Reducer<Text, IntWritable, Text, FloatWritable> {
 	 * model
 	 * @author nikit
 	 * 
-	 * produces <Text, IntWritable>
+	 * produces <Text, FloatWritable>
 	 */
 	@Override
 	public void reduce(Text key, Iterable<IntWritable> values,
