@@ -3,4 +3,6 @@
 *.jar
 *.txt
 
-*.sh
+*.crc
+
+*.m
