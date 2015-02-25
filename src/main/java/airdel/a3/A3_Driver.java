@@ -1,6 +1,6 @@
 /**
- * @author Ryan Millay
- * @author Nikit Waghela
+ * Main class for Assignment 3 - to run learn, predict and check tasks
+ * @author Ryan Millay, Nikit Waghela, Pramod Khare
  * CS6240
  * Assignment 3
  */
@@ -36,8 +36,10 @@ public class A3_Driver {
 			System.out.println(t.stop()+"Exit code\t:\t"+exit);
 		}
 		// try to predict based on some input
-		else if(args[0].equals("-predict")) {
-			
+        else if (args[0].equals("-predict")) {
+            // call prediction function
+            DelayPredicter.predictArrivalDelay(args);
+            System.out.println("Total time to predict\t:\t" + t.stop());
 		}
 		// verify your past predictions
 		else {
@@ -86,15 +88,16 @@ public class A3_Driver {
 			
 			// configure the map and reduce tasks
 			j.setMapperClass(DelayLearnerMapper.class);
+			j.setCombinerClass(DelayLearnerCombiner.class);
 			j.setReducerClass(DelayLearnerReducer.class);
 			
 			// set map output
 			j.setMapOutputKeyClass(Text.class);
-			j.setMapOutputValueClass(IntWritable.class);
+			j.setMapOutputValueClass(Text.class);
 			
 			// configure the output settings
 			j.setOutputKeyClass(Text.class);
-			j.setOutputValueClass(FloatWritable.class);
+			j.setOutputValueClass(IntWritable.class);
 			
 			return j;
 		} catch(Exception e) {

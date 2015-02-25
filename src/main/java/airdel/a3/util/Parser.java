@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
 import au.com.bytecode.opencsv.CSVParser;
 
 public class Parser {
@@ -234,4 +235,27 @@ public class Parser {
 	public boolean isValid() {
 		return ((Boolean) data.get(IS_VALID));
 	}
+	
+	   
+    /**
+     * Set the ArrDel15 column value in parsed key-value data map
+     */
+    public boolean setArrDel15(final int arrDel15) {
+        if(!((Boolean) data.get(IS_VALID))){
+            return false;
+        }
+        data.put("ArrDel15", arrDel15);
+        return true;
+    }
+    
+    /**
+     * Generate String array of all the values in Data Map
+     */
+    public String[] getValues(){
+        String[] values = new String[HEADERS.length];
+        for (int i=0;i<HEADERS.length;i++) {
+            values[i] = getText(HEADERS[i]);
+        }
+        return values;
+    }
 }
