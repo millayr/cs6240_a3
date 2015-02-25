@@ -6,7 +6,7 @@
   <artifactId>a3</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
-
+  
   <name>a3</name>
   <url>http://maven.apache.org</url>
 
@@ -36,6 +36,11 @@
 	  <artifactId>commons-lang</artifactId>
 	  <version>2.4</version>
 	</dependency>
+	<dependency>
+	  <groupId>net.sf.opencsv</groupId>
+	  <artifactId>opencsv</artifactId>
+	  <version>2.3</version>
+	</dependency>
   </dependencies>
   	<build>
 		<plugins>
@@ -45,11 +50,35 @@
 				<configuration>
 					<archive>
 						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries> 
 							<mainClass>airdel.a3.A3_Driver</mainClass>
+							<addClasspath>true</addClasspath>
+         					<classpathPrefix>lib/</classpathPrefix>
 						</manifest>
 					</archive>
 				</configuration>
 			</plugin>
+			<plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                        	<artifactItems>
+			                    <artifactItem>
+			                        <groupId>net.sf.opencsv</groupId>
+			                        <artifactId>opencsv</artifactId>
+			                        <version>2.3</version>
+			                        <outputDirectory>${project.build.directory}/lib</outputDirectory>                                 
+			                    </artifactItem>
+			                </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 </project>

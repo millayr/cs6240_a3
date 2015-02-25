@@ -8,11 +8,14 @@
 package airdel.a3;
 
 import java.io.IOException;
+
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+import airdel.a3.util.Timer;
 
 public class A3_Driver {
 
@@ -20,6 +23,7 @@ public class A3_Driver {
 		// check the input
 		verifyArgs(args);
 		
+		Timer t = new Timer().start();
 		// learn via some input file
 		if(args[0].equals("-learn")){
 			
@@ -27,7 +31,9 @@ public class A3_Driver {
 			Job j = createLearnerJob(args);
 			
 			// run it!
-			System.exit(j.waitForCompletion(true) ? 0 : 1);
+			int exit = j.waitForCompletion(true) ? 0 : 1;
+			
+			System.out.println(t.stop()+"Exit code\t:\t"+exit);
 		}
 		// try to predict based on some input
 		else if(args[0].equals("-predict")) {

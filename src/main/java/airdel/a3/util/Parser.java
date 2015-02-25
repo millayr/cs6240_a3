@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import au.com.bytecode.opencsv.CSVParser;
 
 public class Parser {
 	private static final String PARSER_PROP = "/parser.properties";
@@ -32,6 +33,8 @@ public class Parser {
 	public static List<String[]> KEYS = new ArrayList<String[]>();  // rpm
 	private String del = ",";
 	public Map<String, Object> data;
+	public CSVParser parser;
+	String splitOut[];
 	
 	static {
 		if(!_ISLOAD) {
@@ -119,6 +122,7 @@ public class Parser {
 		for (String header :HEADERS) {
 			data.put(header, null);
 		}
+		parser = new CSVParser(del);
 		data.put(IS_VALID, false);
 	}
 	
@@ -129,18 +133,27 @@ public class Parser {
 	 * @return
 	 */
 	public Parser parse (String line) {
+		data.clear();
 		data.put(IS_VALID, false);
 		if(line == null)
 			return this;
-		String[] splitOut = line.trim().split(del+DEL);
+		
+		//String[] splitOut = line.trim().split(del+DEL);
+		
+		try {
+			splitOut = parser.parseLine(line);
+		} catch (IOException e1) {
+			return this;
+		}
+		
 		if(splitOut.length < HEADERS.length)
 			return this;
 		int i = 0;
-		for(String x: splitOut) {
+		for(String x: HEADERS) {
 			try {
-				data.put(HEADERS[i], Integer.parseInt(x));
+				data.put(x, Integer.parseInt(splitOut[i]));
 			} catch (Exception e) {
-				data.put(HEADERS[i], x);
+				data.put(x, splitOut[i]);
 			}
 			i++;
 		}
@@ -184,6 +197,12 @@ public class Parser {
 		return data.size();
 	}
 	
+	/**
+	 * Returns a set of key value pairs concatenated using
+	 * PIPE separator.
+	 * @param indices String [Key1, Key2]
+	 * @return Key1_Value2<b>|</b>Key2_Value2 <b>String</b>
+	 */
 	public String getKeyValuePairs(String indices[]) {
 		StringBuffer sb = new StringBuffer();
 		int i = 0;
