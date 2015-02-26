@@ -19,20 +19,20 @@ import au.com.bytecode.opencsv.CSVParser;
 
 public class Parser {
 	private static final String PARSER_PROP = "/parser.properties";
-	private static final String DEL = "(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 	private static final String HEADERPROP = "header";
 	private static final String KEYPROP = "keys";  // rpm
 	private static final String HEADERSPLIT = ",";
 	private static final String KEYSPLIT = ",";  // rpm
 	private static final String INTERMEDIATEKEYSPLIT = "_";  // rpm
 	private static final String IS_VALID = "is_valid";
+	private static final String DELAYHEADER = "ArrDel15";
 	private static final String SEP = "_";
 	private static final Object PAIRSEP = "|";
 	public static int MAX_HEAD_LEN = 120;
 	private static boolean _ISLOAD = false;
 	public static String HEADERS[];
 	public static List<String[]> KEYS = new ArrayList<String[]>();  // rpm
-	private String del = ",";
+	private char del = ',';
 	public Map<String, Object> data;
 	public CSVParser parser;
 	String splitOut[];
@@ -118,7 +118,7 @@ public class Parser {
 	 * @param del
 	 */
 	public Parser (char del) {
-		this.del = del+"";
+		this.del = del;
 		data = new HashMap<String, Object>();
 		for (String header :HEADERS) {
 			data.put(header, null);
@@ -147,18 +147,19 @@ public class Parser {
 			return this;
 		}
 		
-		if(splitOut.length < HEADERS.length)
-			return this;
-		int i = 0;
-		for(String x: HEADERS) {
+		for(int i = 0; i< HEADERS.length && i < splitOut.length; i++) {
 			try {
-				data.put(x, Integer.parseInt(splitOut[i]));
+				data.put(HEADERS[i], Integer.parseInt(splitOut[i]));
 			} catch (Exception e) {
-				data.put(x, splitOut[i]);
+				data.put(HEADERS[i], splitOut[i]);
 			}
-			i++;
 		}
-		data.put(IS_VALID, true);
+
+		if (splitOut.length < HEADERS.length)
+            data.put(IS_VALID, false);
+        else
+            data.put(IS_VALID, true);
+
 		return this;
 	}
 	
@@ -244,7 +245,7 @@ public class Parser {
         if(!((Boolean) data.get(IS_VALID))){
             return false;
         }
-        data.put("ArrDel15", arrDel15);
+        data.put(DELAYHEADER, arrDel15);
         return true;
     }
     

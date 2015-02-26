@@ -9,36 +9,24 @@ package airdel.a3;
  */
 
 import java.io.IOException;
-import java.text.MessageFormat;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-public class DelayLearnerCombiner extends Reducer<Text, Text, Text, Text> {
+public class DelayLearnerCombiner extends Reducer<Text, DelayValue, Text, DelayValue> {
 
     @Override
-    public void reduce(Text key, Iterable<Text> values, Context context) throws IOException,
+    public void reduce(Text key, Iterable<DelayValue> values, Context context) throws IOException,
             InterruptedException {
         int sum = 0, total = 0;
-        String[] arrDel15SumNCount;
 
         // Aggregate all sums and counts
-        for (final Text arrDel15 : values) {
-            arrDel15SumNCount = arrDel15.toString().split("\\|");
-            try {
-                sum += Integer.parseInt(arrDel15SumNCount[0]);
-                total += Integer.parseInt(arrDel15SumNCount[1]);
-            } catch (final NumberFormatException nfe) {
-                System.out.println("Invalid arrDel15SumNCount value - " + arrDel15.toString());
-            }
+        for (final DelayValue arrDel15 : values) {
+            sum += arrDel15.getSum();
+            total += arrDel15.getCount();
         }
 
         // Emit this combined sum and count values separated by pipe char
-        context.write(
-                key,
-                new Text(
-                        MessageFormat.format("{0}|{1}", 
-                                String.valueOf(sum), 
-                                String.valueOf(total))));
+        context.write(key, new DelayValue(sum, total));
     }
 }

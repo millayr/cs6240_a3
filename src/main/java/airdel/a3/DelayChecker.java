@@ -8,7 +8,12 @@
 
 package airdel.a3;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 import airdel.a3.util.Parser;
 
@@ -28,11 +33,20 @@ public class DelayChecker {
 	public class DelayCheckerResult {
 		public int numCorrectPredictions;
 		public int numWrongPredictions;
+		public float percentageAccuracy = 0.0f;
 		
 		public DelayCheckerResult(int numCorrect, int numWrong) {
 			numCorrectPredictions = numCorrect;
 			numWrongPredictions = numWrong;
+			percentageAccuracy = ((float)numCorrectPredictions/(numCorrectPredictions+numWrongPredictions))*100;
 		}
+
+        public void printResults() {
+            System.out.println("Checker Results:");
+            System.out.println("Total Correct Predictions\t:\t" + this.numCorrectPredictions);
+            System.out.println("Total Incorrect Predictions\t:\t" + this.numWrongPredictions);
+            System.out.println("Percentage Accuracy\t:\t" + this.percentageAccuracy);
+        }
 	}
 	
 	
@@ -65,9 +79,8 @@ public class DelayChecker {
 		while((pInputLine = pReader.readLine()) != null && (vInputLine = vReader.readLine()) != null) {
 			 pParser.parse(pInputLine);
 			 vParser.parse(vInputLine);
-			 
 			 if(pParser.isValid() && vParser.isValid()) {
-				 if(pParser.getInt(DELAYHEADER) == vParser.getInt(DELAYHEADER))
+				 if(pParser.getText(DELAYHEADER).trim().equals(vParser.getText(DELAYHEADER).trim()))
 					 numCorrect++;
 				 else
 					 numWrong++;

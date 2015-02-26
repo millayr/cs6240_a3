@@ -12,7 +12,7 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
-public class DelayLearnerReducer extends Reducer<Text, Text, Text, IntWritable> {
+public class DelayLearnerReducer extends Reducer<Text, DelayValue, Text, IntWritable> {
 	
 	/**
 	 * Learns the features and puts down the learnings in
@@ -22,22 +22,15 @@ public class DelayLearnerReducer extends Reducer<Text, Text, Text, IntWritable> 
 	 * produces <Text, IntWritable>
 	 */
     @Override
-    public void reduce(Text key, Iterable<Text> values, Context context) throws IOException,
+    public void reduce(Text key, Iterable<DelayValue> values, Context context) throws IOException,
             InterruptedException {
         int sum = 0, total = 0;
-        String[] arrDel15SumNCount;
 
         // Aggregate all sums and counts
-        for (final Text arrDel15 : values) {
-            arrDel15SumNCount = arrDel15.toString().split("\\|");
-            try {
-                sum += Integer.parseInt(arrDel15SumNCount[0]);
-                total += Integer.parseInt(arrDel15SumNCount[1]);
-            } catch (final NumberFormatException nfe) {
-                System.out.println("Invalid arrDel15SumNCount value - " + arrDel15.toString());
-            }
+        for (final DelayValue arrDel15 : values) {
+            sum += arrDel15.getSum();
+            total += arrDel15.getCount();
         }
-
         // Calculate the percentage of delays for current key value
         // As per our implementation, average equals the percentage,
         // because we emit 1 for delay and 0 for no delay from map-function

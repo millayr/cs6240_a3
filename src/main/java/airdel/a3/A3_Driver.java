@@ -35,16 +35,18 @@ public class A3_Driver {
 			
 			System.out.println(t.stop()+"Exit code\t:\t"+exit);
 		}
-		// try to predict based on some input
+        // try to predict based on some input
         else if (args[0].equals("-predict")) {
             // call prediction function
-            DelayPredicter.predictArrivalDelay(args);
+            new DelayPredicter(args[1], args[2]).predictArrivalDelay();
             System.out.println("Total time to predict\t:\t" + t.stop());
-		}
-		// verify your past predictions
-		else {
-			
-		}
+        }
+        // verify your past predictions
+        else {
+            // call prediction checker function
+            new DelayChecker(args[1], args[2]).check().printResults();
+            System.out.println("Total time to check\t:\t" + t.stop());
+        }
 	}
 	
 	
@@ -93,7 +95,7 @@ public class A3_Driver {
 			
 			// set map output
 			j.setMapOutputKeyClass(Text.class);
-			j.setMapOutputValueClass(Text.class);
+			j.setMapOutputValueClass(DelayValue.class);
 			
 			// configure the output settings
 			j.setOutputKeyClass(Text.class);

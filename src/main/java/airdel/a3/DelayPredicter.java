@@ -21,9 +21,19 @@ import au.com.bytecode.opencsv.CSVWriter;
  * @Modified
  */
 public class DelayPredicter {
-    private final static Map<String, Integer> keypairPercentageMap = new HashMap<String, Integer>();
-    private final static Pattern pattern = Pattern.compile("\\s+");
-    private static Parser parser = new Parser(',');
+    private final Map<String, Integer> keypairPercentageMap = new HashMap<String, Integer>();
+    private final Pattern pattern = Pattern.compile("\\s+");
+    private final Parser parser = new Parser(',');
+    private final String mFile;
+    private final String pFile;
+    private File modelFile;
+    private File predictFile;
+    private File tmpPredictCSVFile;
+
+    public DelayPredicter(final String mFile, final String pFile) {
+        this.mFile = mFile;
+        this.pFile = pFile;
+    }
 
     /**
      * Predict program -> takes two files as input - model.m and predict.csv Outputs the modified
@@ -32,34 +42,20 @@ public class DelayPredicter {
      * @param args
      * @throws Exception
      */
-    public static void predictArrivalDelay(String[] args) throws Exception {
+    public void predictArrivalDelay() throws Exception {
         BufferedReader br = null;
         CSVWriter writer = null;
         try {
             // First check if both model.m and predict.csv exists
-            final File modelFile = new File(args[1]);
-            final File predictFile = new File(args[2]);
-            if (!modelFile.exists() || !predictFile.exists()) {
-                System.err.println("Please verify input files exists, then try again.");
-                System.exit(-1);
-            }
+            validateFiles();
 
             // Read model.m file into HashMap <String, Integer>
             // Load the whole model.m file into HashMap
             loadModelIntoMap(modelFile);
 
-            // Create a new temporary file - name it like "predict_tmp231313343.csv"
-            String predictDirPath =
-                    predictFile.getCanonicalPath().substring(0,
-                            predictFile.getCanonicalPath().lastIndexOf(File.separatorChar) + 1);
-            String tmpPredictCSVFileName =
-                    predictDirPath + "predict_tmp" + System.currentTimeMillis() + ".csv";
-            File tmpPredictCSVFile = new File(tmpPredictCSVFileName);
-            if (!tmpPredictCSVFile.createNewFile()) {
-                System.err
-                        .println("Unable to create temporary file, check you have proper permisions");
-                System.exit(-1);
-            }
+            // Create a new temporary predict csv file - name it like "predict_tmp231313343.csv"
+            createTempPredictCSVFile();
+
             writer = new CSVWriter(new FileWriter(tmpPredictCSVFile));
 
             // Read predict.csv one line at a time
@@ -70,17 +66,12 @@ public class DelayPredicter {
             // Read predict file line by line, parse it using parser
             while ((line = br.readLine()) != null) {
                 valuesToWriteToNewCSV = processLine(line);
-                // check if line parsing failed
-                if (null != valuesToWriteToNewCSV) {
-                    // print the line with prediction value for ArrDel15
-                    writer.writeNext(valuesToWriteToNewCSV);
-                    writer.flush();
-                } else {
-                    // print the line as is
-                    // TODO - Need parser to handle it
-                }
+                // print the line with prediction value for ArrDel15
+                writer.writeNext(valuesToWriteToNewCSV);
+                writer.flush();
             }
-            // Delete the old file and Rename the tmp file to predict.csv
+
+            // Delete the old predict.csv file and Rename the tmp file to predict.csv
             String predictFileName = predictFile.getName();
 
             if (predictFile.delete()) {
@@ -88,7 +79,7 @@ public class DelayPredicter {
                 tmpPredictCSVFile.renameTo(new File(predictFileName));
             } else {
                 System.out.println("Unable to delete " + predictFileName);
-                System.out.println("Updated predict file is - " + tmpPredictCSVFileName);
+                System.out.println("Updated predict file is - " + tmpPredictCSVFile.getName());
             }
         } catch (final IOException e) {
             System.err.println("Failed to load prediction model - " + e.getMessage());
@@ -109,13 +100,49 @@ public class DelayPredicter {
     }
 
     /**
+     * Validate if both model.m and predict.csv files exists, if not exit giving proper message
+     */
+    private void validateFiles() {
+        // First check if both model.m and predict.csv exists
+        this.modelFile = new File(this.mFile);
+        this.predictFile = new File(this.pFile);
+        if (!modelFile.exists() || !predictFile.exists()) {
+            System.err.println("Please verify input files exists, then try again.");
+            System.exit(-1);
+        }
+    }
+
+    /**
+     * Creates a temporary file which stores all the predicted results.
+     * 
+     * This temporary file will be created in the same directory of given predict.csv
+     * 
+     * This file will replace the original predict.csv file in the end
+     * 
+     * @throws IOException
+     */
+    private void createTempPredictCSVFile() throws IOException {
+        // Get predict.csv 's directory path
+        String predictDirPath =
+                this.predictFile.getCanonicalPath().substring(0,
+                        this.predictFile.getCanonicalPath().lastIndexOf(File.separatorChar) + 1);
+        // Construct the temporary predict.csv file name - make it dynamic with timestamp
+        this.tmpPredictCSVFile =
+                new File(predictDirPath + "predict_tmp" + System.currentTimeMillis() + ".csv");
+        if (!tmpPredictCSVFile.createNewFile()) {
+            System.err.println("Unable to create temporary file, check you have proper permisions");
+            System.exit(-1);
+        }
+    }
+
+    /**
      * Load the model.m file and load it into keypair-to-delay-percentage hashmap
      * 
      * @Model.m => each line contains keypair value each space separated with delay percentage
      * @param modelFile
      * @throws IOException
      */
-    public static void loadModelIntoMap(final File modelFile) throws IOException {
+    private void loadModelIntoMap(final File modelFile) throws IOException {
         BufferedReader br = null;
         //
         try {
@@ -152,13 +179,14 @@ public class DelayPredicter {
      * @param line
      * @return
      */
-    public static String[] processLine(String line) {
+    private String[] processLine(String line) {
         String[] result = null;
         try {
             // parse the line
             parser.parse(line);
             if (!parser.isValid()) {
-                return null;
+                // Return the row as is - as it is in invalid format
+                return parser.getValues();
             }
 
             Integer percentage = 0;
@@ -168,7 +196,6 @@ public class DelayPredicter {
                 percentage = keypairPercentageMap.get(parser.getKeyValuePairs(key));
                 // If the percentage is greater than or equals to 5000 i.e. 50.00%
                 if (null != percentage && percentage >= 5000) {
-                    System.out.println("Flight Delay Found...");
                     willFlightBeDelayed = true;
                     break;
                 }

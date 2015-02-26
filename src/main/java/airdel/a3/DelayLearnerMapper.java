@@ -10,7 +10,6 @@ package airdel.a3;
 
 //Import declarations
 import java.io.IOException;
-import java.text.MessageFormat;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -27,12 +26,10 @@ import airdel.a3.util.Parser;
  * Input Key:  Line in file
  * Input Value:  Text content of the line
  * Output Keys:  Array of fields to consider for pattern detection
- * Output Value:  1 if the flight was delayed by 15 min, 0 otherwise, 
- *                in the format "1|1" or "0|1" to maintain how many ones and 
- *                zeroes, which will be used in percentage calculations 
+ * Output Value:  1 if the flight was delayed by 15 min, 0 otherwise (in DelayValue object format)
  */
 public class DelayLearnerMapper 
-extends Mapper<LongWritable, Text, Text, Text> {
+extends Mapper<LongWritable, Text, Text, DelayValue> {
 	
 	private Parser parser = new Parser(',');
 	
@@ -47,10 +44,9 @@ extends Mapper<LongWritable, Text, Text, Text> {
 			int isDelayed = parser.getInt("ArrDel15");
 			
 			// time to start writing to the context object
-			for(String[] key : Parser.KEYS) {
-				context.write(new Text(parser.getKeyValuePairs(key)), 
-				        new Text(MessageFormat.format("{0}|1", String.valueOf(isDelayed))));
-			}
+            for (String[] key : Parser.KEYS) {
+                context.write(new Text(parser.getKeyValuePairs(key)), new DelayValue(isDelayed, 1));
+            }
 		}	
 	}
 }
