@@ -30,23 +30,27 @@ import airdel.a3.util.Parser;
  */
 public class DelayLearnerMapper 
 extends Mapper<LongWritable, Text, Text, DelayValue> {
-	
 	private Parser parser = new Parser(',');
-	
 	@Override
 	public void map(LongWritable offset, Text value, Context context) throws IOException, InterruptedException {
-		// Send the value to the parser to put the data in to a map
-		parser.parse(value.toString());
+        try {
+            // Send the value to the parser to put the data in to a map
+            parser.parse(value.toString());
 
-		// only process this line if it's valid
-		if(parser.isValid()) {
-			// Was this flight delayed?
-			int isDelayed = parser.getInt("ArrDel15");
-			
-			// time to start writing to the context object
-            for (String[] key : Parser.KEYS) {
-                context.write(new Text(parser.getKeyValuePairs(key)), new DelayValue(isDelayed, 1));
+
+            // only process this line if it's valid
+            if (parser.isValid()) {
+                // Was this flight delayed?
+                int isDelayed = parser.getInt("ArrDel15");
+
+                // time to start writing to the context object
+                for (String[] key : Parser.KEYS) {
+                    context.write(new Text(parser.getKeyValuePairs(key)), new DelayValue(isDelayed,
+                            1));
+                }
             }
-		}	
-	}
+        } catch (final Exception e) {
+            System.out.println("Invalid ArrDel15 value -" + e.getMessage());
+        }
+    }
 }
