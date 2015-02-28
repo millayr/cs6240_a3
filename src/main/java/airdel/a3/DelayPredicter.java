@@ -16,7 +16,7 @@ import au.com.bytecode.opencsv.CSVWriter;
  * DelayPredicter - uses model.m to predict if a flight represented by every single line in
  * predict.csv will be delayed or not and modifies the predict.csv with prediction values
  * 
- * @author Pramod Khare
+ * @author Pramod Khare, Ryan Millay, Nikit Waghela
  * @Created Tue Feb 24 19:35:48 EST 2015
  * @Modified
  */
@@ -24,11 +24,13 @@ public class DelayPredicter {
     private final Map<String, Integer> keypairPercentageMap = new HashMap<String, Integer>();
     private final Pattern pattern = Pattern.compile("\\s+");
     private final Parser parser = new Parser(',');
-    private final String mFile;
-    private final String pFile;
+    private String mFile;
+    private String pFile;
     private File modelFile;
     private File predictFile;
     private File tmpPredictCSVFile;
+
+    public DelayPredicter() {}
 
     public DelayPredicter(final String mFile, final String pFile) {
         this.mFile = mFile;
@@ -75,11 +77,10 @@ public class DelayPredicter {
             String predictFileName = predictFile.getName();
 
             if (predictFile.delete()) {
-                System.out.println(predictFileName + " is deleted!");
                 tmpPredictCSVFile.renameTo(new File(predictFileName));
             } else {
                 System.out.println("Unable to delete " + predictFileName);
-                System.out.println("Updated predict file is - " + tmpPredictCSVFile.getName());
+                System.out.println("Predictions stored in file - " + tmpPredictCSVFile.getName());
             }
         } catch (final IOException e) {
             System.err.println("Failed to load prediction model - " + e.getMessage());

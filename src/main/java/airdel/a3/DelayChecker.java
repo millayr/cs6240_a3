@@ -49,6 +49,7 @@ public class DelayChecker {
         }
 	}
 	
+	public DelayChecker() {}
 	
 	/**
 	 * Constructor takes the paths for the prediction file and for the
