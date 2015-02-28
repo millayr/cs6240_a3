@@ -61,9 +61,6 @@ case "$1" in
 		
 		hdfs_conf $2
 		filename=$(basename $2)
-		echo "File Name - "		
-		echo $filename
-		echo "preparing to run $1"
 
 		# Execute the Learn MR job in pseudo mode 
 		hadoop jar target/a3-1.0.jar -learn "/user/$username/$filename" output
