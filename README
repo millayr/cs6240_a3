@@ -73,5 +73,4 @@ How to execute/run programs:
 			(IMP use above predicted predict.csv)
 
 Important Note:
-1) When running in hadoop-pseudo mode, make sure you use hdfs file-paths than local-file-system paths for data.csv/all.csv file
-2) Make sure hadoop is properly installed and configured before you run any of above programs.
+1) Make sure hadoop is properly installed and configured before you run any of above programs.
