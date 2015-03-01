@@ -22,7 +22,7 @@ import au.com.bytecode.opencsv.CSVWriter;
  */
 public class DelayPredicter {
     private final Map<String, Integer> keypairPercentageMap = new HashMap<String, Integer>();
-    private final Pattern pattern = Pattern.compile("\\s+");
+    private final Pattern pattern = Pattern.compile("\\t+");
     private final Parser parser = new Parser(',');
     private String mFile;
     private String pFile;
